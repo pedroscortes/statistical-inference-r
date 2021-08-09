@@ -1,0 +1,77 @@
+---
+title: "The Effect of Supplement on Tooth Growth"
+author: "Pedro Cortes dos Santos"
+date: "08/08/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Getting familiar with the ToothGrowth database
+```{r, echo = TRUE}
+library(datasets) ; data("ToothGrowth")
+dim(ToothGrowth)
+colnames(ToothGrowth)
+head(ToothGrowth)
+str(ToothGrowth)
+```
+
+## Providing a basic summary of the data
+
+```{r, echo = TRUE}
+summary(ToothGrowth)
+```
+
+We can observe that our dataset is composed by 2 supplements (OJ and VC) and 3 different dosages (0.5, 1.0 and 2.0)
+
+```{r, echo = FALSE}
+library(ggplot2)
+
+ggplot(ToothGrowth, aes(x = factor(dose), y = len, fill = factor(dose))) + 
+  geom_boxplot() +
+  facet_grid(.~supp) +
+  xlab("Dosage") +
+  ylab("Observed Teeth Growth") +
+  ggtitle("Observed Teeth Growth by Supplement for Different Dosages") +
+  labs(fill = "Dose (mg)") +
+  scale_fill_manual(values = c("#fa1616", "#c71a1a", "#821111"))
+
+```
+
+## Comparing Tooth Growth by Supplement and Dosage
+
+First we should split the data in three subsets - one for each dosage - so we are able to run a t-test for each data subset.
+
+```{r, echo = TRUE}
+dose1 <- subset(ToothGrowth, dose %in% c(0.5, 1.0))
+dose2 <- subset(ToothGrowth, dose %in% c(0.5, 2.0))
+dose3 <- subset(ToothGrowth, dose %in% c(1.0, 2.0))
+t.test(len ~ dose, paired = F, var.equal = F, data = dose1)
+
+t.test(len~dose, data=dose1, paired=FALSE)
+
+t.test(len~dose, data=dose2, paired=FALSE)
+
+t.test(len~dose, data=dose3, paired=FALSE)
+```
+
+For all three dose level pairs, the p-value is less than 0.05, and the confidence interval does not contain zero. The mean tooth length increases on raising the dose level. This indicates that we can reject the null hypothesis, and establish that increasing the dose level leads to an increase in tooth length.
+
+But what about the supplement types? Does it have any effect on teeth growth?
+
+```{r, echo = TRUE}
+t.test(len ~ supp, paired = F, var.equal = F, data = ToothGrowth)
+```
+
+The p-value is 0.06, and the confidence interval contains zero. This indicates that we can not reject the null hypothesis that the different supplement types have no effect on tooth length.
+
+## Assumptions
+
+- The populations are independent
+- Members of the sample population are representative of the entire population
+- The experiment was done with random assignment of individuals to different dose level categories and supplement types
+- For the t-tests, the variances are different for the two groups being compared
+
+## Conclusions
+
+With those assumptions above, we are able to conclude that increasing the dose level leads to increased tooth growth, and that the supplement type has no effect on tooth growth.

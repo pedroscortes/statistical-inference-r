@@ -1,0 +1,80 @@
+---
+title: "Comparing Theoretical and Simulation Models"
+author: "Pedro Cortes dos Santos"
+date: "08/08/2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+## Simulations
+
+The following code includes the lambda, number of exponentials and the number of simulations we'll run.
+We generate a numeric vector named "means", which contains the result of the simulations. The following simulations generate the mean.
+
+```{r, echo = TRUE}
+set.seed(1000)
+
+lambda <- 0.2
+
+n <- 40
+
+sims <- 1000
+
+running_sim <- replicate(sims, rexp(n,lambda))
+
+means_expsim <- apply(running_sim,2, mean)
+
+```
+
+We'll also generate a histogram of the simulated mean values.
+
+```{r, echo = FALSE}
+hist(means_expsim, breaks = 50, xlim = c(2,9), main = "Means of Exponential Function Simulation", xlab = "Simulation Means")
+```
+
+
+## Sample Mean x Theoretical Mean
+
+The exponential distribution mean is 1/lambda. Considering that for this simulation lambda is 0.2, the theoretical mean should be 5.
+
+```{r, echo = FALSE}
+hist(means_expsim, main = "Sample Mean x Theoretical Mean", xlim = c(2,9), breaks = 50, xlab = "Simulation Means")
+
+abline(v = mean(means_expsim), lwd = "3", col = "red")
+```
+
+```{r, echo = TRUE}
+mean(means_expsim)
+```
+
+The sample mean is approximately 4.98, very close to the theoretical mean of 5.
+
+## Sample Variance x Theoretical Variance
+
+The standard deviation of the exponential distribution is (1/lambda)/sqrt(n). So we'll have to compare this equation to our previous simulations.
+
+```{r, echo = TRUE}
+print(paste("Theoretical Variance: ", round( (1/lambda)^2/n, 3)))
+print(paste("Sample Variance: ", round( var(means_expsim),3)))
+```
+
+Considering the previous results, we can say the sample variance is pretty close to the calculated variance.
+
+## Distribution
+
+The following investigates wheter the exponential distribution is approximately normal. Due to the Central Limit Theorem, the means of the sample simulations should follow a normal distribution.
+
+```{r, echo = FALSE}
+hist(means_expsim, breaks = 50, xlim = c(2,9), main = "Means of Exponential Function Simulation", xlab = "Simulation Means", prob = TRUE)
+lines(density(means_expsim), lwd = 3, col = "red")
+
+x <- seq(min(means_expsim), max(means_expsim), length = 2*n)
+y <- dnorm(x, mean = 1/lambda, sd = sqrt(((1/lambda)/sqrt(n))^2))
+lines(x,y, pch = 20, lwd = 2, lty = 2)
+```
+
+## Conclusion
+
+As shown above, the distribution of means of the simulated exponential distributions follows a normal distribution due to the Central Limit Theorem. We can also observe that as the number os samples increase, the distribution (red line) gets even closer to the standard normal distribution (represented by the dotted line).
