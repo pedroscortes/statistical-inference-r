@@ -3,8 +3,8 @@ title: "The Effect of Supplement on Tooth Growth"
 author: "Pedro Cortes dos Santos"
 date: "08/08/2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ## Getting familiar with the ToothGrowth database

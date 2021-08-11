@@ -3,9 +3,9 @@ title: "Comparing Theoretical and Simulation Models"
 author: "Pedro Cortes dos Santos"
 date: "08/08/2021"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ## Simulations
